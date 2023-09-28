@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Gallery</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+    
+        .gallery-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .gallery-card {
+            flex: 1;
+            margin: 10px;
+            cursor: pointer;
+            
+            min-width: 200px; 
+        }
+
+        .project-details {
+            position: fixed;
+            top: 0;
+            right: -400px; 
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); 
+            overflow-y: scroll;
+            transition: right 0.3s ease-in-out; 
+            z-index: 999; 
+            padding: 20px;
+        }
+
+        .project-details-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="text-center mt-4 mb-4">Project Gallery</h1>
+    
+    <div class="container">
+        <div class="row gallery-container">
+            <!-- Gallery View -->
+            {% for project in data %}
+            <div class="col-md-4 gallery-card" data-index="{{ loop.index }}" onclick="showProjectDetails(this)">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ project['Project.Title'] }}</h5>
+                        <p class="card-text"><strong>Technologies:</strong> {{ project['Project.Technologies'] }}</p>
+                        
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    
+    <div class="project-details" id="projectDetails">
+        
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        function showProjectDetails(card) {
+            var index = card.getAttribute('data-index');
+            var projectDetails = document.getElementById('projectDetails');
+            var project = {{ data|tojson|safe }}[index - 1];
+
+            // Create HTML for project details
+            var detailsHTML = `
+                <h2>${project['Project.Title']}</h2>
+                <p><strong>Technologies:</strong> ${project['Project.Technologies']}</p>
+                <p><strong>Frontend:</strong> ${project['Technical_Skillset.Frontend']}</p>
+                <p><strong>Backend:</strong> ${project['Technical_Skillset.Backend']}</p>
+                <p><strong>Databases:</strong> ${project['Technical_Skillset.Databases']}</p>
+                <p><strong>Infrastructure:</strong> ${project['Technical_Skillset.Infrastructre']}</p>
+                <p><strong>Availability:</strong> ${project['Other_Information.Availability']}</p>
+                <!-- Add more fields here if needed -->
+            `;
+
+            projectDetails.innerHTML = detailsHTML;
+
+            // Slide in the project details box from the right
+            projectDetails.style.right = '0';
+        }
+    </script>
+</body>
+</html>
